@@ -1,5 +1,4 @@
-package ar.edu.itba.pod.query1;
-
+package model;
 
 public class Movement {
 

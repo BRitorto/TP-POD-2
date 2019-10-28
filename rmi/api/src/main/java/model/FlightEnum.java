@@ -1,4 +1,4 @@
-package ar.edu.itba.pod.query1;
+package model;
 
 public enum FlightEnum {
     DEPARTURE, LANDING

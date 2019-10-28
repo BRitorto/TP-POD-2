@@ -40,9 +40,9 @@ public class Query1 implements Query{
         /* MapReduce Creación del Job */
         Job<String, Movement> job = jobTracker.newJob(source);
         ICompletableFuture<Map<String, Integer>> future = job
-                .mapper(new Query1Mapper())
-                .combiner(new Query1CombinerFactory())
-                .reducer(new Query1ReducerFactory())
+                .mapper(new Query1.Query1Mapper())
+                .combiner(new Query1.Query1CombinerFactory())
+                .reducer(new Query1.Query1ReducerFactory())
                 .submit();
 
         /* Wait and retrieve the result, OACI movement result

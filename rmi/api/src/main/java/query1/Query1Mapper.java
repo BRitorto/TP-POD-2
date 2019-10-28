@@ -1,7 +1,9 @@
-package ar.edu.itba.pod.query1;
+package query1;
 
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
+import model.Movement;
+import model.MovementEnum;
 
 /* MapReduce - Mapper */
 public class Query1Mapper implements Mapper<String, Movement, String, Integer> {

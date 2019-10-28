@@ -1,4 +1,4 @@
-package ar.edu.itba.pod.query1;
+package model;
 
 public class Airport {
 
@@ -27,7 +27,7 @@ public class Airport {
 
     @Override
     public String toString() {
-        return "ar.edu.itba.pod.query1.Airport{" +
+        return "Airport{" +
                 "oaci='" + oaci + '\'' +
                 ", name='" + name + '\'' +
                 ", province='" + province + '\'' +
