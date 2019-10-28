@@ -1,17 +1,15 @@
 package ar.edu.itba.pod.client.queries;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
-/**
- * Created by estebankramer on 19/10/2019.
- */
 public interface Query {
 
     void readData();
 
     void uploadData();
 
-    void run();
+    void run() throws ExecutionException, InterruptedException;
 
     void writeResult() throws IOException;
 
