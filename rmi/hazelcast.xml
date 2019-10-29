@@ -24,8 +24,8 @@
            xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <group>
-        <name>cluster</name>
-        <password>cluster-pass</password>
+        <name>g3</name>
+        <password>g3</password>
     </group>
     <management-center enabled="false">http://localhost:8080/mancenter</management-center>
     <network>
@@ -50,7 +50,7 @@
             </tcp-ip>
             <aws enabled="false">
                 <access-key>my-access-key</access-key>
-                <secret-key>my-secret-key</secret-key>
+                <secret-key>my-access-key</secret-key>
                 <!--optional, default is us-east-1 -->
                 <region>us-west-1</region>
                 <!--optional, default is ec2.amazonaws.com. If set, region shouldn't be set as it will override this property -->
@@ -62,7 +62,7 @@
             </aws>
         </join>
         <interfaces enabled="true">
-            <interface>10.6.0.*</interface>
+            <interface>192.168.0.12</interface>
         </interfaces>
         <ssl enabled="false"/>
         <socket-interceptor enabled="false"/>
