@@ -16,7 +16,7 @@ public class Query1Mapper implements Mapper<String, Movement, String, Integer> {
             context.emit(movement.getStartOACI(), ONE);
         }
 
-        if(movement.getMovementType() == MovementEnum.LANDING){
+        if(movement.getMovementType() == MovementEnum.ARRIVAL){
             context.emit(movement.getEndOACI(), ONE);
         }
     }
