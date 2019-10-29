@@ -1,8 +1,10 @@
 package model;
 
+import java.util.Optional;
+
 public class Movement {
 
-    FlightEnum flightType;
+    Optional<FlightEnum> flightType;
     MovementEnum movementType;
     String startOACI;
     String endOACI;
@@ -11,14 +13,14 @@ public class Movement {
 
     }
 
-    public Movement(FlightEnum flightType, MovementEnum movementType, String startOACI, String endOACI) {
+    public Movement(Optional<FlightEnum> flightType, MovementEnum movementType, String startOACI, String endOACI) {
         this.flightType = flightType;
         this.movementType = movementType;
         this.startOACI = startOACI;
         this.endOACI = endOACI;
     }
 
-    public FlightEnum getFlightType() {
+    public Optional<FlightEnum> getFlightType() {
         return flightType;
     }
 
