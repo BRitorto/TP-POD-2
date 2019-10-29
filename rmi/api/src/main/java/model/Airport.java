@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Airport implements DataSerializable {
+public class Airport implements DataSerializable  {
 
     private Optional<String> oaci;
     String name;
     String province;
+
+    public Airport(){}
 
     public Airport(Optional<String> oaci, String name, String province){
         this.oaci = oaci;
@@ -43,17 +45,17 @@ public class Airport implements DataSerializable {
     }
 
     @Override
-    public void writeData(ObjectDataOutput objectDataOutput) throws IOException {
-        objectDataOutput.writeUTF(oaci.orElse("NULL"));
-        objectDataOutput.writeUTF(name);
-        objectDataOutput.writeUTF(province);
+    public void writeData(ObjectDataOutput out) throws IOException {
+        out.writeUTF(oaci.orElse("NULL"));
+        out.writeUTF(name);
+        out.writeUTF(province);
     }
 
     @Override
-    public void readData(ObjectDataInput objectDataInput) throws IOException {
-        oaci = Optional.of(objectDataInput.readUTF()).filter(s -> !"NULL".equals(s));
-        name = objectDataInput.readUTF();
-        province = objectDataInput.readUTF();
+    public void readData(ObjectDataInput in) throws IOException {
+        oaci = Optional.of(in.readUTF()).filter(s -> !"NULL".equals(s));
+        name = in.readUTF();
+        province = in.readUTF();
     }
 
     @Override

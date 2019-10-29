@@ -1,8 +1,13 @@
 package model;
 
+import com.hazelcast.nio.ObjectDataInput;
+import com.hazelcast.nio.ObjectDataOutput;
+import com.hazelcast.nio.serialization.DataSerializable;
+
+import java.io.IOException;
 import java.util.Optional;
 
-public class Movement {
+public class Movement implements DataSerializable {
 
     Optional<FlightEnum> flightType;
     MovementEnum movementType;
@@ -34,5 +39,21 @@ public class Movement {
 
     public String getEndOACI() {
         return endOACI;
+    }
+
+    @Override
+    public void writeData(ObjectDataOutput objectDataOutput) throws IOException {
+        objectDataOutput.writeUTF(flightType.map(FlightEnum::name).orElse("NULL"));
+        objectDataOutput.writeUTF(movementType.name());
+        objectDataOutput.writeUTF(startOACI);
+        objectDataOutput.writeUTF(endOACI);
+    }
+
+    @Override
+    public void readData(ObjectDataInput objectDataInput) throws IOException {
+        flightType = Optional.of(objectDataInput.readUTF()).map(s ->  s.equals("NULL") ? null : FlightEnum.valueOf(s));
+        movementType = MovementEnum.valueOf(objectDataInput.readUTF());
+        startOACI = objectDataInput.readUTF();
+        endOACI = objectDataInput.readUTF();
     }
 }

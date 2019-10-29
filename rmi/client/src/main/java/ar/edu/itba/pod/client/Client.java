@@ -71,7 +71,7 @@ public class Client {
 
         IList<Movement> movementsHz = client.getList("movements");
         CsvParser movementCsvParser = new MovementCsvParser(movementsHz);
-        Path movementsPath = Paths.get(commandLine.getOptionValue(IN_PATH_NAME) + "/movientos.csv");
+        Path movementsPath = Paths.get(commandLine.getOptionValue(IN_PATH_NAME) + "/movimientos.csv");
         movementCsvParser.loadData(movementsPath);
 
         int queryNumber = Integer.parseInt(commandLine.getOptionValue(QUERY_OPTION_NAME));
