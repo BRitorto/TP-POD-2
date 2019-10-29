@@ -1,15 +1,16 @@
 package ar.edu.itba.pod.client;
 
-import ar.edu.itba.pod.client.queries.BaseQuery;
 import ar.edu.itba.pod.client.queries.Query;
 import ar.edu.itba.pod.client.queries.Query1;
+import ar.edu.itba.pod.client.utils.AirportCsvParser;
+import ar.edu.itba.pod.client.utils.CsvParser;
+import ar.edu.itba.pod.client.utils.MovementCsvParser;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
-import com.sun.xml.internal.rngom.parse.host.Base;
 import model.Airport;
 import model.Movement;
 import org.apache.commons.cli.*;
@@ -17,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
@@ -62,14 +65,16 @@ public class Client {
         HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
 
         IList<Airport> airportsHz = client.getList("airports");
-        CsvParser airportCsvParser = new AirportParser(airportsHz);
-        airportCsvParser.loadFile(commandLine.getOptionValue(IN_PATH_NAME) + "/aeropuertos.csv");
+        CsvParser airportCsvParser = new AirportCsvParser(airportsHz);
+        Path airportsPath = Paths.get(commandLine.getOptionValue(IN_PATH_NAME) + "/aeropuertos.csv");
+        airportCsvParser.loadData(airportsPath);
 
         IList<Movement> movementsHz = client.getList("movements");
-        CsvParser movementCsvParser = new MovementParser(movementsHz);
-        movementCsvParser.loadFile(commandLine.getOptionValue(IN_PATH_NAME) + "/movientos.csv");
+        CsvParser movementCsvParser = new MovementCsvParser(movementsHz);
+        Path movementsPath = Paths.get(commandLine.getOptionValue(IN_PATH_NAME) + "/movientos.csv");
+        movementCsvParser.loadData(movementsPath);
 
-        int queryNumber = Integer.parseInt(commandLine.getOptionValue(QUERY_OPTION_NAME);
+        int queryNumber = Integer.parseInt(commandLine.getOptionValue(QUERY_OPTION_NAME));
         logger.info("Running Query #{}", queryNumber);
         Query runner = runQuery(queryNumber, airportsHz, movementsHz, client, commandLine);
         runner.run();
