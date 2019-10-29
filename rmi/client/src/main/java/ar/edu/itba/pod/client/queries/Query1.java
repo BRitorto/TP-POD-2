@@ -1,7 +1,6 @@
 package ar.edu.itba.pod.client.queries;
 
-
-
+import ar.edu.itba.pod.client.utils.PrintResult;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.core.IList;
@@ -27,18 +26,21 @@ public class Query1 extends BaseQuery {
     private IList<Airport> airports;
     private IList<Movement> movements;
     private CommandLine arguments;
+    private PrintResult printResult;
 
     List<queryOutput> qO;
 
-    public Query1(IList<Airport> airports, IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments) {
+    public Query1(IList<Airport> airports, IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments,
+                  PrintResult printResult) {
         super(hazelcastInstance, arguments);
         this.airports = airports;
         this.movements = movements;
         this.arguments = arguments;
+        this.printResult = printResult;
     }
 
     @Override
-    public void run() throws ExecutionException, InterruptedException {
+    public void run() throws ExecutionException, InterruptedException, IOException {
         /* Create Query 1 Job */
         JobTracker jobTracker = getJobTracker();
 
@@ -59,6 +61,8 @@ public class Query1 extends BaseQuery {
 
         qO = getResult(result);
 
+        writeResult();
+
         for(queryOutput q : qO){
             System.out.println(q);
         }
@@ -76,7 +80,12 @@ public class Query1 extends BaseQuery {
 
     @Override
     public void writeResult() throws IOException {
+        writResult(qO);
+    }
 
+    private void writResult(List<queryOutput> results){
+        printResult.appendToFile("OACI;Denominación;Movimientos\n");
+        results.forEach(p -> printResult.appendToFile(p+"\n"));
     }
     
     @Override

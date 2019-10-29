@@ -5,6 +5,7 @@ import ar.edu.itba.pod.client.queries.Query1;
 import ar.edu.itba.pod.client.utils.AirportCsvParser;
 import ar.edu.itba.pod.client.utils.CsvParser;
 import ar.edu.itba.pod.client.utils.MovementCsvParser;
+import ar.edu.itba.pod.client.utils.PrintResult;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
@@ -76,7 +77,10 @@ public class Client {
 
         int queryNumber = Integer.parseInt(commandLine.getOptionValue(QUERY_OPTION_NAME));
         logger.info("Running Query #{}", queryNumber);
-        Query runner = runQuery(queryNumber, airportsHz, movementsHz, client, commandLine);
+
+        PrintResult printResult = new PrintResult(commandLine.getOptionValue("outPath"));
+
+        Query runner = runQuery(queryNumber, airportsHz, movementsHz, client, commandLine, printResult);
         runner.run();
         runner.writeResult();
         logger.info("Client shutting down ...");
@@ -115,10 +119,11 @@ public class Client {
         options.addOption(op);
     }
 
-    private static Query runQuery(int queryNumber, IList<Airport> airports, IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments) {
+    private static Query runQuery(int queryNumber, IList<Airport> airports, IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments,
+                                  PrintResult printResult) {
         switch(queryNumber) {
             case 1:
-                return new Query1(airports, movements, hazelcastInstance, arguments);
+                return new Query1(airports, movements, hazelcastInstance, arguments, printResult);
             default:
                 throw new IllegalArgumentException("Invalid query number " + queryNumber + ". Insert a value from 1 to 6.");
         }

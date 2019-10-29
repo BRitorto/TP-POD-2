@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface Query {
 
-    void run() throws ExecutionException, InterruptedException;
+    void run() throws ExecutionException, InterruptedException, IOException;
 
     void writeResult() throws IOException;
 
