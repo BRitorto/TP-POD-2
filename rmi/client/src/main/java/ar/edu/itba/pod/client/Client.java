@@ -1,14 +1,27 @@
 package ar.edu.itba.pod.client;
 
+import ar.edu.itba.pod.client.queries.BaseQuery;
+import ar.edu.itba.pod.client.queries.Query;
+import ar.edu.itba.pod.client.queries.Query1;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.core.IList;
+import com.sun.xml.internal.rngom.parse.host.Base;
+import model.Airport;
+import model.Movement;
 import org.apache.commons.cli.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 public class Client {
+    private static Logger logger = LoggerFactory.getLogger(Client.class);
+
     private static final String QUERY_OPTION_NAME = "query";
     private static final String QUERY_OPTION_DESCRIPTION = "todo";
 
@@ -32,7 +45,7 @@ public class Client {
 //    TODO add descriptions
 
 
-    public static void main( String[] args ) {
+    public static void main( String[] args ) throws ExecutionException, InterruptedException, IOException {
         Options options;
         options = new Options();
         addOption(options, QUERY_OPTION_NAME, QUERY_OPTION_DESCRIPTION, true, true);
@@ -45,9 +58,24 @@ public class Client {
 
         CommandLine commandLine = parse(args, options);
         ClientConfig clientConfig = getConfig(commandLine);
+        logger.info("Client starting ...");
         HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
-//     TODO:   ACA VAN EL SWITCH DE LAS QUERIES
 
+        IList<Airport> airportsHz = client.getList("airports");
+        CsvParser airportCsvParser = new AirportParser(airportsHz);
+        airportCsvParser.loadFile(commandLine.getOptionValue(IN_PATH_NAME) + "/aeropuertos.csv");
+
+        IList<Movement> movementsHz = client.getList("movements");
+        CsvParser movementCsvParser = new MovementParser(movementsHz);
+        movementCsvParser.loadFile(commandLine.getOptionValue(IN_PATH_NAME) + "/movientos.csv");
+
+        int queryNumber = Integer.parseInt(commandLine.getOptionValue(QUERY_OPTION_NAME);
+        logger.info("Running Query #{}", queryNumber);
+        Query runner = runQuery(queryNumber, client, commandLine);
+        runner.run();
+        runner.writeResult();
+        logger.info("Client shutting down ...");
+        client.shutdown();
     }
 
     private static ClientConfig getConfig(CommandLine commandLine) {
@@ -80,6 +108,15 @@ public class Client {
         Option op = new Option(name, name, hasArguments, description);
         op.setRequired(required);
         options.addOption(op);
+    }
+
+    private static Query runQuery(int queryNumber, IList<Airport> airports, IList<Movement> movements, BaseQuery baseQuery) {
+        switch(queryNumber) {
+            case 1:
+                return new Query1(airports, movements, baseQuery);
+            default:
+                throw new IllegalArgumentException("Invalid query number " + queryNumber + ". Insert a value from 1 to 6.");
+        }
     }
 
 }
