@@ -59,7 +59,7 @@ public class MovementCsvParser implements CsvParser {
         }
 
         if(s.equalsIgnoreCase("aterrizaje")) {
-            return MovementEnum.LANDING;
+            return MovementEnum.ARRIVAL;
         }
 
         throw new IllegalArgumentException("Illegal Movement Type: " + s);

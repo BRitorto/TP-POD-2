@@ -1,5 +1,5 @@
 package model;
 
 public enum MovementEnum {
-    DEPARTURE, LANDING
+    DEPARTURE, ARRIVAL
 }
