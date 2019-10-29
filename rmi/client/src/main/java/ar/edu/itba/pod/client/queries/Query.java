@@ -5,10 +5,6 @@ import java.util.concurrent.ExecutionException;
 
 public interface Query {
 
-    void readData();
-
-    void uploadData();
-
     void run() throws ExecutionException, InterruptedException;
 
     void writeResult() throws IOException;

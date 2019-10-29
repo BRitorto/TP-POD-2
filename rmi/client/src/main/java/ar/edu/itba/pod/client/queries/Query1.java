@@ -10,7 +10,6 @@ import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
 import model.Airport;
 import model.Movement;
-import org.apache.commons.csv.CSVParser;
 import query1.Query1CombinerFactory;
 import query1.Query1Mapper;
 import query1.Query1ReducerFactory;
@@ -29,7 +28,7 @@ public class Query1 extends BaseQuery {
     private IList<Movement> movements;
     private CommandLine arguments;
 
-    List<queryOutput> queryOutputs;
+    List<queryOutput> qO;
 
     public Query1(IList<Airport> airports, IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments) {
         super(hazelcastInstance, arguments);
@@ -58,7 +57,11 @@ public class Query1 extends BaseQuery {
         * Resultado obtenido por vía sincrónica */
         Map<String, Integer> result = future.get();
 
-        queryOutputs = getResult(result);
+        qO = getResult(result);
+
+        for(queryOutput q : qO){
+            System.out.println(q);
+        }
     }
 
     private Map<String, String> oaciNameMap(){
@@ -71,17 +74,6 @@ public class Query1 extends BaseQuery {
         return m;
     }
 
-
-    @Override
-    public void readData() {
-
-    }
-
-    @Override
-    public void uploadData() {
-
-    }
-
     @Override
     public void writeResult() throws IOException {
 
@@ -91,7 +83,7 @@ public class Query1 extends BaseQuery {
     public String getResult() {
         StringBuilder builder = new StringBuilder();
 
-        queryOutputs.forEach(l -> builder.append(l.OACI).append(";").append(l.name).
+        qO.forEach(l -> builder.append(l.OACI).append(";").append(l.name).
                 append(";").append(l.sum).append("\n"));
 
         return builder.toString();
@@ -141,7 +133,7 @@ public class Query1 extends BaseQuery {
 
         @Override
         public String toString() {
-            return OACI + ";" + name + ";" + sum;
+            return OACI + " ; " + name + " ; " + sum;
         }
     }
 }
