@@ -1,12 +1,19 @@
 package ar.edu.itba.pod.client.queries;
 
 
-import ar.edu.itba.pod.query1.*;
+
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.core.IList;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
+import model.Airport;
+import model.Movement;
+import org.apache.commons.csv.CSVParser;
+import query1.Query1CombinerFactory;
+import query1.Query1Mapper;
+import query1.Query1ReducerFactory;
+import org.apache.commons.cli.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -20,13 +27,15 @@ public class Query1 implements Query{
     private IList<Airport> airports;
     private IList<Movement> movements;
     private BaseQuery baseQuery;
+    private CommandLine arguments;
 
     List<queryOutput> queryOutputs;
 
-    public Query1(IList<Airport> airports, IList<Movement> movements, BaseQuery baseQuery) {
+    public Query1(IList<Airport> airports, IList<Movement> movements, BaseQuery baseQuery, CommandLine arguments) {
         this.airports = airports;
         this.movements = movements;
         this.baseQuery = baseQuery;
+        this.arguments = arguments;
     }
 
     @Override
@@ -40,9 +49,9 @@ public class Query1 implements Query{
         /* MapReduce Creación del Job */
         Job<String, Movement> job = jobTracker.newJob(source);
         ICompletableFuture<Map<String, Integer>> future = job
-                .mapper(new Query1.Query1Mapper())
-                .combiner(new Query1.Query1CombinerFactory())
-                .reducer(new Query1.Query1ReducerFactory())
+                .mapper(new Query1Mapper())
+                .combiner(new Query1CombinerFactory())
+                .reducer(new Query1ReducerFactory())
                 .submit();
 
         /* Wait and retrieve the result, OACI movement result
@@ -50,20 +59,15 @@ public class Query1 implements Query{
         Map<String, Integer> result = future.get();
 
         queryOutputs = getResult(result);
-
-
-
     }
 
     private Map<String, String> oaciNameMap(){
         Map<String, String> m = new HashMap<>();
 
-        for(Airport airport : airports){
-            String oaci = airport.getOaci();
-            if (oaci != null) {
-                m.put(oaci, airport.getName());
-            }
+        for(Airport airport : airports) {
+            airport.getOaci().ifPresent(oaci -> m.put(oaci,airport.getName()));
         }
+
         return m;
     }
 
