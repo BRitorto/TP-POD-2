@@ -2,6 +2,7 @@ package ar.edu.itba.pod.client.queries;
 
 
 
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.core.IList;
 import com.hazelcast.mapreduce.Job;
@@ -13,35 +14,34 @@ import org.apache.commons.csv.CSVParser;
 import query1.Query1CombinerFactory;
 import query1.Query1Mapper;
 import query1.Query1ReducerFactory;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-public class Query1 implements Query{
+public class Query1 extends BaseQuery {
 
     private final static int id = 1;
     /* This interface defines the IList object that is used throughout Content Server
     for database queries and other representations of tabular data.**/
     private IList<Airport> airports;
     private IList<Movement> movements;
-    private BaseQuery baseQuery;
     private CommandLine arguments;
 
     List<queryOutput> queryOutputs;
 
-    public Query1(IList<Airport> airports, IList<Movement> movements, BaseQuery baseQuery, CommandLine arguments) {
+    public Query1(IList<Airport> airports, IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments) {
+        super(hazelcastInstance, arguments);
         this.airports = airports;
         this.movements = movements;
-        this.baseQuery = baseQuery;
         this.arguments = arguments;
     }
 
     @Override
     public void run() throws ExecutionException, InterruptedException {
         /* Create Query 1 Job */
-        JobTracker jobTracker = this.baseQuery.getJobTracker();
+        JobTracker jobTracker = getJobTracker();
 
         /* MapReduce Key Value Source */
         KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);

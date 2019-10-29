@@ -71,7 +71,7 @@ public class Client {
 
         int queryNumber = Integer.parseInt(commandLine.getOptionValue(QUERY_OPTION_NAME);
         logger.info("Running Query #{}", queryNumber);
-        Query runner = runQuery(queryNumber, client, commandLine);
+        Query runner = runQuery(queryNumber, airportsHz, movementsHz, client, commandLine);
         runner.run();
         runner.writeResult();
         logger.info("Client shutting down ...");
@@ -110,10 +110,10 @@ public class Client {
         options.addOption(op);
     }
 
-    private static Query runQuery(int queryNumber, IList<Airport> airports, IList<Movement> movements, BaseQuery baseQuery) {
+    private static Query runQuery(int queryNumber, IList<Airport> airports, IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments) {
         switch(queryNumber) {
             case 1:
-                return new Query1(airports, movements, baseQuery);
+                return new Query1(airports, movements, hazelcastInstance, arguments);
             default:
                 throw new IllegalArgumentException("Invalid query number " + queryNumber + ". Insert a value from 1 to 6.");
         }
