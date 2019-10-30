@@ -3,6 +3,7 @@ package ar.edu.itba.pod.client.utils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 
 public class PrintResult {
@@ -30,6 +31,10 @@ public class PrintResult {
        } catch (IOException ioe) {
            ioe.printStackTrace();
        }
+   }
+
+   public void appendTimeOf(String data){
+       append(LocalDateTime.now()+ " INFO - " + data);
    }
 
 }

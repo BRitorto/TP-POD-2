@@ -80,7 +80,7 @@ public class Query1 extends BaseQuery {
     }
 
     private void writResult(List<queryOutput> results){
-        printResult.append("OACI ; Denominación ; Movimientos\n");
+        printResult.append("OACI;Denominación;Movimientos\n");
         results.forEach(p -> printResult.append(p+"\n"));
     }
     
@@ -138,7 +138,7 @@ public class Query1 extends BaseQuery {
 
         @Override
         public String toString() {
-            return OACI + " ; " + name + " ; " + sum;
+            return OACI + ";" + name + ";" + sum;
         }
     }
 }

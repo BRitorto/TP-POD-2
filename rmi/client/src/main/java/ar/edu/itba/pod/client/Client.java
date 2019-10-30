@@ -66,28 +66,41 @@ public class Client {
         logger.info("Client starting ...");
         HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
 
+        int queryNumber = Integer.parseInt(commandLine.getOptionValue(QUERY_OPTION_NAME));
+
+        PrintResult printResult = new PrintResult(commandLine.getOptionValue("outPath") + "query"+queryNumber+".csv");
+        PrintResult printTime = new PrintResult(commandLine.getOptionValue("outPath") + "query"+queryNumber+".txt");
+
+        printTime.appendTimeOf("Inicio de la lectura del archivo de entrada");
+
+        /* Read airports file */
         IList<Airport> airportsHz = client.getList("airports");
         CsvParser airportCsvParser = new AirportCsvParser(airportsHz);
         Path airportsPath = Paths.get(commandLine.getOptionValue(IN_PATH_NAME) + "/aeropuertos.csv");
         airportCsvParser.loadData(airportsPath);
 
+        /* Read movements file */
         IList<Movement> movementsHz = client.getList("movements");
         CsvParser movementCsvParser = new MovementCsvParser(movementsHz);
         Path movementsPath = Paths.get(commandLine.getOptionValue(IN_PATH_NAME) + "/movimientos.csv");
         movementCsvParser.loadData(movementsPath);
 
-        int queryNumber = Integer.parseInt(commandLine.getOptionValue(QUERY_OPTION_NAME));
+        printTime.appendTimeOf("Fin de lectura del archivo de entrada");
+
         logger.info("Running Query #{}", queryNumber);
 
-        PrintResult printResult = new PrintResult(commandLine.getOptionValue("outPath"));
 
         Query runner = runQuery(queryNumber, airportsHz, movementsHz, client, commandLine, printResult);
+        printTime.appendTimeOf("Inicio de un trabajo MapReduce");
         runner.run();
-        runner.writeResult();
+        printTime.appendTimeOf("Fin de un trabajo MapReduce");
+//        runner.writeResult();
         logger.info("Client shutting down ...");
         client.shutdown();
 
+
         printResult.close();
+        printTime.close();
     }
 
     private static ClientConfig getConfig(CommandLine commandLine) {
