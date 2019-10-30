@@ -61,16 +61,24 @@ public class Client {
         addOption(options, OACI_NAME, OACI_DESCRIPTION, true, false);
         addOption(options, MIN_NAME, MIN_DESCRIPTION, true, false);
 
+        /* Retrieve arguments info */
         CommandLine commandLine = parse(args, options);
+
+        /* Set configuration for Hazelcast client */
         ClientConfig clientConfig = getConfig(commandLine);
-        logger.info("Client starting ...");
-        HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
 
         int queryNumber = Integer.parseInt(commandLine.getOptionValue(QUERY_OPTION_NAME));
 
+        logger.info("Client starting ...");
+
+        /* Hazelcast client instance*/
+        HazelcastInstance client = HazelcastClient.newHazelcastClient(clientConfig);
+
+        /* Class info for time file */
         String className = Client.class.getSimpleName();
         String methodName = new Exception().getStackTrace()[0].getMethodName();
 
+        /* Result & Time file */
         PrintResult printResult = new PrintResult(commandLine.getOptionValue("outPath") + "query"+queryNumber+".csv");
         PrintResult printTime = new PrintResult(commandLine.getOptionValue("outPath") + "query"+queryNumber+".txt");
 
@@ -94,17 +102,22 @@ public class Client {
 
         logger.info("Running Query #{}", queryNumber);
 
+        /* Create query */
         Query runner = runQuery(queryNumber, airportsHz, movementsHz, client, commandLine, printResult);
         printTime.appendTimeOf(methodName, className, new Exception().getStackTrace()[0].getLineNumber(),
                 "Inicio de un trabajo MapReduce");
+
+        /* Run query */
         runner.run();
         printTime.appendTimeOf(methodName, className, new Exception().getStackTrace()[0].getLineNumber(),
                 "Fin de un trabajo MapReduce");
 //        runner.writeResult();
+
+        /* End client */
         logger.info("Client shutting down ...");
         client.shutdown();
 
-
+        /* Close files */
         printResult.close();
         printTime.close();
     }
@@ -123,13 +136,11 @@ public class Client {
 
     public static CommandLine parse(String[] args, Options options){
         CommandLineParser parser = new DefaultParser();
-//        HelpFormatter formatter = new HelpFormatter();
 
         try {
             return parser.parse(options, args);
         } catch (ParseException e) {
             System.out.println( "Parsing failed.  Reason: " + e.getMessage());
-//            formatter.printHelp(this.remoteServiceName, options);
             System.exit(1);
             return null;
         }

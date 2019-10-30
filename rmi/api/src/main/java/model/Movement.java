@@ -14,9 +14,7 @@ public class Movement implements DataSerializable {
     String startOACI;
     String endOACI;
 
-    public Movement(){
-
-    }
+    public Movement(){ }
 
     public Movement(Optional<FlightEnum> flightType, MovementEnum movementType, String startOACI, String endOACI) {
         this.flightType = flightType;

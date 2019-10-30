@@ -21,8 +21,6 @@ import java.util.concurrent.ExecutionException;
 public class Query1 extends BaseQuery {
 
     private final static int id = 1;
-    /* This interface defines the IList object that is used throughout Content Server
-    for database queries and other representations of tabular data.**/
     private IList<Airport> airports;
     private IList<Movement> movements;
     private CommandLine arguments;
@@ -41,13 +39,14 @@ public class Query1 extends BaseQuery {
 
     @Override
     public void run() throws ExecutionException, InterruptedException, IOException {
+
         /* Create Query 1 Job */
         JobTracker jobTracker = getJobTracker();
 
         /* MapReduce Key Value Source */
         KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);
 
-        /* MapReduce Creación del Job */
+        /* MapReduce Job Creation */
         Job<String, Movement> job = jobTracker.newJob(source);
         ICompletableFuture<Map<String, Integer>> future = job
                 .mapper(new Query1Mapper())
@@ -55,12 +54,12 @@ public class Query1 extends BaseQuery {
                 .reducer(new Query1ReducerFactory())
                 .submit();
 
-        /* Wait and retrieve the result, OACI movement result
-        * Resultado obtenido por vía sincrónica */
+        /* Wait and retrieve the result, OACI movement result */
         Map<String, Integer> result = future.get();
 
         qO = getResult(result);
 
+        /* write file */
         writeResult();
     }
 
@@ -106,7 +105,7 @@ public class Query1 extends BaseQuery {
             }
         }
 
-        /* sort result */
+        /* Sort result */
         queryOutputList.sort(Comparator.comparing(queryOutput::getSum).reversed().
                 thenComparing(queryOutput::getOACI));
 
