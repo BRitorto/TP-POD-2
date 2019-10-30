@@ -68,10 +68,14 @@ public class Client {
 
         int queryNumber = Integer.parseInt(commandLine.getOptionValue(QUERY_OPTION_NAME));
 
+        String className = Client.class.getSimpleName();
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+
         PrintResult printResult = new PrintResult(commandLine.getOptionValue("outPath") + "query"+queryNumber+".csv");
         PrintResult printTime = new PrintResult(commandLine.getOptionValue("outPath") + "query"+queryNumber+".txt");
 
-        printTime.appendTimeOf("Inicio de la lectura del archivo de entrada");
+        printTime.appendTimeOf(methodName, className, new Exception().getStackTrace()[0].getLineNumber(),
+                "Inicio de la lectura del archivo de entrada");
 
         /* Read airports file */
         IList<Airport> airportsHz = client.getList("airports");
@@ -85,15 +89,17 @@ public class Client {
         Path movementsPath = Paths.get(commandLine.getOptionValue(IN_PATH_NAME) + "/movimientos.csv");
         movementCsvParser.loadData(movementsPath);
 
-        printTime.appendTimeOf("Fin de lectura del archivo de entrada");
+        printTime.appendTimeOf(methodName, className, new Exception().getStackTrace()[0].getLineNumber(),
+                "Fin de lectura del archivo de entrada ");
 
         logger.info("Running Query #{}", queryNumber);
 
-
         Query runner = runQuery(queryNumber, airportsHz, movementsHz, client, commandLine, printResult);
-        printTime.appendTimeOf("Inicio de un trabajo MapReduce");
+        printTime.appendTimeOf(methodName, className, new Exception().getStackTrace()[0].getLineNumber(),
+                "Inicio de un trabajo MapReduce");
         runner.run();
-        printTime.appendTimeOf("Fin de un trabajo MapReduce");
+        printTime.appendTimeOf(methodName, className, new Exception().getStackTrace()[0].getLineNumber(),
+                "Fin de un trabajo MapReduce");
 //        runner.writeResult();
         logger.info("Client shutting down ...");
         client.shutdown();

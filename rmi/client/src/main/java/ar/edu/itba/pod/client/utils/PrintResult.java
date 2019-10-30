@@ -38,11 +38,13 @@ public class PrintResult {
        }
    }
 
-   public void appendTimeOf(String data){
+   public void appendTimeOf(String methodName, String className, int lineNumber, String data){
        LocalDate date = LocalDate.now();
        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
        String strDate = formatter.format(date);
-       append(strDate + " " + LocalTime.now()+ " INFO - " + data + "\n");
+
+       append(strDate + " " + LocalTime.now() + " INFO [" + methodName + "] " + className +
+               " (" + className + ".java:" + lineNumber + ") - " + data +"\n");
    }
 
 }
