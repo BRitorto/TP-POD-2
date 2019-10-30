@@ -3,7 +3,12 @@ package ar.edu.itba.pod.client.utils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 
 public class PrintResult {
@@ -34,7 +39,10 @@ public class PrintResult {
    }
 
    public void appendTimeOf(String data){
-       append(LocalDateTime.now()+ " INFO - " + data);
+       LocalDate date = LocalDate.now();
+       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+       String strDate = formatter.format(date);
+       append(strDate + " " + LocalTime.now()+ " INFO - " + data + "\n");
    }
 
 }
