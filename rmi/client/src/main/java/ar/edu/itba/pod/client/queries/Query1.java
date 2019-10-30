@@ -62,10 +62,6 @@ public class Query1 extends BaseQuery {
         qO = getResult(result);
 
         writeResult();
-
-        for(queryOutput q : qO){
-            System.out.println(q);
-        }
     }
 
     private Map<String, String> oaciNameMap(){
@@ -84,8 +80,8 @@ public class Query1 extends BaseQuery {
     }
 
     private void writResult(List<queryOutput> results){
-        printResult.appendToFile("OACI;Denominación;Movimientos\n");
-        results.forEach(p -> printResult.appendToFile(p+"\n"));
+        printResult.append("OACI ; Denominación ; Movimientos\n");
+        results.forEach(p -> printResult.append(p+"\n"));
     }
     
     @Override

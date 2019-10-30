@@ -86,6 +86,8 @@ public class Client {
         runner.writeResult();
         logger.info("Client shutting down ...");
         client.shutdown();
+
+        printResult.close();
     }
 
     private static ClientConfig getConfig(CommandLine commandLine) {

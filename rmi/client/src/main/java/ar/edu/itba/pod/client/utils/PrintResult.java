@@ -3,11 +3,11 @@ package ar.edu.itba.pod.client.utils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
+
 
 public class PrintResult {
 
-  BufferedWriter bufferedWriter;
+    BufferedWriter bufferedWriter;
 
    public PrintResult(String name) {
        try {
@@ -18,29 +18,17 @@ public class PrintResult {
    }
 
    public void close() {
-       if (this.bufferedWriter != null) try {
-           this.bufferedWriter.flush();
-           this.bufferedWriter.close();
+       if (bufferedWriter != null) try {
+           bufferedWriter.flush();
+           bufferedWriter.close();
        } catch (IOException ioe2) { }
    }
 
-   public void appendToFile(String data) {
+   public void append(String data) {
        try {
-           this.bufferedWriter.write(data);
+           bufferedWriter.write(data);
        } catch (IOException ioe) {
            ioe.printStackTrace();
-       }
-   }
-
-//   public void log(String data){
-//            appendToFile(LocalDateTime.now() +" INFO - "+data +"\n");
-//   }
-
-   public void flush() {
-       try {
-           this.bufferedWriter.flush();
-       } catch (IOException e) {
-           e.printStackTrace();
        }
    }
 

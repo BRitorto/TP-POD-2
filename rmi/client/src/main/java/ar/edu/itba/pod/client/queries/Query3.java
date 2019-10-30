@@ -105,8 +105,8 @@ public class Query3 extends BaseQuery {
     }
 
     private void writResult(List<queryOutput> results){
-        printResult.appendToFile("Grupo;AeropuertoA;AeropuertoB\n");
-        results.forEach(p -> printResult.appendToFile(p+"\n"));
+        printResult.append("Grupo ; AeropuertoA ; AeropuertoB\n");
+        results.forEach(p -> printResult.append(p+"\n"));
     }
 
     @Override
