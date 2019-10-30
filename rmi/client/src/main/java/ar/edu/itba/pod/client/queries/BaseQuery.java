@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public abstract class BaseQuery implements Query {
-    private final HazelcastInstance hazelcastInstance;
+    protected final HazelcastInstance hazelcastInstance;
     private final CommandLine arguments;
 
     public BaseQuery(HazelcastInstance hazelcastInstance, CommandLine arguments) {

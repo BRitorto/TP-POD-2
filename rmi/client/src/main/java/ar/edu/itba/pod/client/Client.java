@@ -2,6 +2,7 @@ package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.client.queries.Query;
 import ar.edu.itba.pod.client.queries.Query1;
+import ar.edu.itba.pod.client.queries.Query3;
 import ar.edu.itba.pod.client.utils.AirportCsvParser;
 import ar.edu.itba.pod.client.utils.CsvParser;
 import ar.edu.itba.pod.client.utils.MovementCsvParser;
@@ -124,6 +125,8 @@ public class Client {
         switch(queryNumber) {
             case 1:
                 return new Query1(airports, movements, hazelcastInstance, arguments, printResult);
+            case 3:
+                return new Query3(movements, hazelcastInstance, arguments, printResult);
             default:
                 throw new IllegalArgumentException("Invalid query number " + queryNumber + ". Insert a value from 1 to 6.");
         }
