@@ -13,14 +13,16 @@ public class Movement implements DataSerializable {
     MovementEnum movementType;
     String startOACI;
     String endOACI;
+    String airlineName;
 
     public Movement(){ }
 
-    public Movement(Optional<FlightEnum> flightType, MovementEnum movementType, String startOACI, String endOACI) {
+    public Movement(Optional<FlightEnum> flightType, MovementEnum movementType, String startOACI, String endOACI, String airlineName) {
         this.flightType = flightType;
         this.movementType = movementType;
         this.startOACI = startOACI;
         this.endOACI = endOACI;
+        this.airlineName = airlineName;
     }
 
     public Optional<FlightEnum> getFlightType() {
@@ -39,12 +41,17 @@ public class Movement implements DataSerializable {
         return endOACI;
     }
 
+    public String getAirlineName() {
+        return airlineName;
+    }
+
     @Override
     public void writeData(ObjectDataOutput objectDataOutput) throws IOException {
         objectDataOutput.writeUTF(flightType.map(FlightEnum::name).orElse("NULL"));
         objectDataOutput.writeUTF(movementType.name());
         objectDataOutput.writeUTF(startOACI);
         objectDataOutput.writeUTF(endOACI);
+        objectDataOutput.writeUTF(airlineName);
     }
 
     @Override
@@ -53,5 +60,6 @@ public class Movement implements DataSerializable {
         movementType = MovementEnum.valueOf(objectDataInput.readUTF());
         startOACI = objectDataInput.readUTF();
         endOACI = objectDataInput.readUTF();
+        airlineName = objectDataInput.readUTF();
     }
 }
