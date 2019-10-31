@@ -2,6 +2,7 @@ package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.client.queries.Query;
 import ar.edu.itba.pod.client.queries.Query1;
+import ar.edu.itba.pod.client.queries.Query2;
 import ar.edu.itba.pod.client.queries.Query3;
 import ar.edu.itba.pod.client.utils.AirportCsvParser;
 import ar.edu.itba.pod.client.utils.CsvParser;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
@@ -157,6 +159,12 @@ public class Client {
         switch(queryNumber) {
             case 1:
                 return new Query1(airports, movements, hazelcastInstance, arguments, printResult);
+            case 2:
+                Optional<String> n = Optional.ofNullable(arguments.getOptionValue(N_NAME));
+                if(!n.isPresent()){
+                    throw new IllegalArgumentException("Missing argument N");
+                }
+                return new Query2(movements, hazelcastInstance, arguments, printResult);
             case 3:
                 return new Query3(movements, hazelcastInstance, arguments, printResult);
             default:

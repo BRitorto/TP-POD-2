@@ -4,17 +4,16 @@ import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
 /* MapReduce Reducer */
-public class Query2ReducerFactory implements ReducerFactory<String, Integer, Double> {
+public class Query2ReducerFactory implements ReducerFactory<String, Integer, Integer> {
 
     @Override
-    public Reducer<Integer, Double> newReducer(String s) {
-        return new query2.Query2ReducerFactory.Query2Reducer();
+    public Reducer<Integer, Integer> newReducer(String s) {
+        return new Query1Reducer();
     }
 
-    private class Query2Reducer extends Reducer<Integer, Double>{
+    private class Query1Reducer extends Reducer<Integer, Integer>{
 
-        private volatile double sum;
-        private int total = Query2Mapper.total;
+        private volatile int sum;
 
         @Override
         public void beginReduce () {
@@ -23,11 +22,11 @@ public class Query2ReducerFactory implements ReducerFactory<String, Integer, Dou
 
         @Override
         public void reduce(Integer integer) {
-            sum += 100.00 * integer/total;
+            sum += integer;
         }
 
         @Override
-        public Double finalizeReduce() {
+        public Integer finalizeReduce() {
             return sum;
         }
     }
