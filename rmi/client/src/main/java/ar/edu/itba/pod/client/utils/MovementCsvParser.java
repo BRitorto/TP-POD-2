@@ -40,7 +40,7 @@ public class MovementCsvParser implements CsvParser {
     private void getMovementData(String line) {
         String[] column = line.split(";");
         /* Info we need for queries */
-        localMovements.add(new Movement(flightType(column[3]), movementType(column[4]), column[5], column[6]));
+        localMovements.add(new Movement(flightType(column[3]), movementType(column[4]), column[5], column[6], column[7]));
     }
 
     private Optional<FlightEnum> flightType(String s) {
