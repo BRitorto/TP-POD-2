@@ -115,13 +115,17 @@ public class Client {
                 "Fin de un trabajo MapReduce");
 //        runner.writeResult();
 
-        /* End client */
-        logger.info("Client shutting down ...");
-        client.shutdown();
+
 
         /* Close files */
         printResult.close();
         printTime.close();
+        airportsHz.destroy();
+        movementsHz.destroy();
+
+        /* End client */
+        logger.info("Client shutting down ...");
+        client.shutdown();
     }
 
     private static ClientConfig getConfig(CommandLine commandLine) {
