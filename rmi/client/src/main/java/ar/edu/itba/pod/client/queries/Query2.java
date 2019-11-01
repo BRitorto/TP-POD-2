@@ -122,7 +122,7 @@ public class Query2 extends BaseQuery {
 
         @Override
         public String toString() {
-            return airlineName + " ; " + percentage;
+            return airlineName + " ; " + String.format("%1.2f", percentage);
         }
     }
 }
