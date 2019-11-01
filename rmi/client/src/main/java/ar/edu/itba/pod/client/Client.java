@@ -30,25 +30,25 @@ public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
 
     private static final String QUERY_OPTION_NAME = "query";
-    private static final String QUERY_OPTION_DESCRIPTION = "todo";
+    private static final String QUERY_OPTION_DESCRIPTION = "Query number to run [1-6]";
 
     private static final String ADDRESSES_NAME = "addresses";
-    private static final String ADDRESSES_DESCRIPTION = "todo";
+    private static final String ADDRESSES_DESCRIPTION = "Address to start the server on";
 
     private static final String IN_PATH_NAME = "inPath";
-    private static final String IN_PATH_DESCRIPTION = "todo";
+    private static final String IN_PATH_DESCRIPTION = "Path where the data .csv is located";
 
     private static final String OUT_PATH_NAME = "outPath";
-    private static final String OUT_PATH_DESCRIPTION = "todo";
+    private static final String OUT_PATH_DESCRIPTION = "Path to leave the out files in";
 
     private static final String N_NAME = "n";
-    private static final String N_DESCRIPTION = "todo";
+    private static final String N_DESCRIPTION = "Extra parameter to delimit number of results";
 
     private static final String OACI_NAME = "oaci";
-    private static final String OACI_DESCRIPTION = "todo";
+    private static final String OACI_DESCRIPTION = "OACI of the airport";
 
     private static final String MIN_NAME = "min";
-    private static final String MIN_DESCRIPTION = "todo";
+    private static final String MIN_DESCRIPTION = "Min";
 //    TODO add descriptions
 
 
