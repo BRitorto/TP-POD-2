@@ -17,8 +17,7 @@ public class Query1CombinerFactory implements CombinerFactory<String, Integer, I
 
         @Override
         public void combine(Integer integer) {
-//            sum += integer;
-            sum++;
+            sum += integer;
         }
 
         @Override
