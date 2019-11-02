@@ -17,6 +17,7 @@ import query2.Query2ReducerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -87,7 +88,7 @@ public class Query2 extends BaseQuery {
 
         @Override
         public String toString() {
-            return airlineName + " ; " + String.format("%.2f", (percentage - 0.005));
+            return airlineName + ";" + String.format(Locale.ROOT,"%.2f", (percentage - 0.005)) + "%";
         }
     }
 }

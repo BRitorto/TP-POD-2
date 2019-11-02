@@ -13,7 +13,7 @@ public class Server {
     public static void main(String[] args) throws FileNotFoundException {
         logger.info("rmi Server Starting ...");
         final Config serverConfig = new XmlConfigBuilder(
-                "../../../hazelcast.xml")
+                "hazelcast.xml")
                 .build();
         Hazelcast.newHazelcastInstance(serverConfig);
     }

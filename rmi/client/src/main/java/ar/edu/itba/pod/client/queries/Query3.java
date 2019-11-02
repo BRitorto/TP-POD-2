@@ -50,10 +50,6 @@ public class Query3 extends BaseQuery {
         queryOutputs = getResult(groupOfMovements);
 
         writeResult();
-
-        for(queryOutput q : queryOutputs){
-            System.out.println(q);
-        }
     }
 
     private Map<String, Integer> getMovements(JobTracker jobTracker, IList<Movement> movements) throws ExecutionException, InterruptedException {
@@ -102,7 +98,7 @@ public class Query3 extends BaseQuery {
     }
 
     private void writResult(List<queryOutput> results){
-        printResult.append("Grupo ; AeropuertoA ; AeropuertoB\n");
+        printResult.append("Grupo;AeropuertoA;AeropuertoB\n");
         results.forEach(p -> printResult.append(p+"\n"));
     }
 
@@ -165,7 +161,7 @@ public class Query3 extends BaseQuery {
 
         @Override
         public String toString() {
-            return numberOfMovements + " ; " + OACI1 + " ; " + OACI2;
+            return numberOfMovements + ";" + OACI1 + ";" + OACI2;
         }
 
         @Override
