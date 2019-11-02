@@ -173,6 +173,12 @@ public class Client {
                 return new Query3(movements, hazelcastInstance, arguments, printResult);
             case 5:
                 return new Query5(movements, hazelcastInstance, arguments, printResult, airports);
+            case 6:
+                Optional<String> min = Optional.ofNullable(arguments.getOptionValue(MIN_NAME));
+                if(!min.isPresent()){
+                    throw new IllegalArgumentException("Missing argument min");
+                }
+                return new Query6(airports, movements, hazelcastInstance, arguments, printResult);
             default:
                 throw new IllegalArgumentException("Invalid query number " + queryNumber + ". Insert a value from 1 to 6.");
         }
