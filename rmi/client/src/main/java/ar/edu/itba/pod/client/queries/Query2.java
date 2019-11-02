@@ -22,13 +22,10 @@ import java.util.concurrent.ExecutionException;
 
 public class Query2 extends BaseQuery {
 
-    private final static int id = 2;
-    /* This interface defines the IList object that is used throughout Content Server
-    for database queries and other representations of tabular data.**/
     private final IList<Movement> movements;
     private final CommandLine arguments;
     private final PrintResult printResult;
-    private List<queryOutput> qO;
+    private List<queryOutput> queryOutputs;
 
     public Query2(final IList<Movement> movements, final HazelcastInstance hazelcastInstance,
                   final CommandLine arguments, final PrintResult printResult) {
@@ -39,33 +36,27 @@ public class Query2 extends BaseQuery {
     }
 
     @Override
-    public void run() throws ExecutionException, InterruptedException, IOException {
-        /* Create Query 2 Job */
+    public void run() throws ExecutionException, InterruptedException {
         final JobTracker jobTracker = getJobTracker();
-        /* MapReduce Key Value Source */
         final KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);
         final Integer n = Integer.valueOf(arguments.getOptionValue("n"));
-        /* MapReduce Creación del Job */
         final Job<String, Movement> job = jobTracker.newJob(source);
         final ICompletableFuture<List<Map.Entry<String, Double>>> future = job
                 .mapper(new Query2Mapper())
                 .combiner(new Query2CombinerFactory())
                 .reducer(new Query2ReducerFactory())
                 .submit(new Query2Collator(n));
-        /* Wait and retrieve the result, Airport porcentage result
-         * Resultado obtenido por vía sincrónica */
         final List<Map.Entry<String, Double>> result = future.get();
-        qO = getResult(result);
-        /* write file */
+        queryOutputs = getResult(result);
         writeResult();
     }
 
     @Override
-    public void writeResult() throws IOException {
-        writResult(qO);
+    public void writeResult() {
+        writeResult(queryOutputs);
     }
 
-    private void writResult(final List<queryOutput> results){
+    private void writeResult(final List<queryOutput> results){
         printResult.append("Aerolínea;Porcentaje\n");
         results.forEach(p -> printResult.append(p+"\n"));
     }
@@ -73,7 +64,7 @@ public class Query2 extends BaseQuery {
     @Override
     public String getResult() {
         final StringBuilder builder = new StringBuilder();
-        qO.forEach(l -> builder.append(l.airlineName).append(";").append(l.percentage).append("\n"));
+        queryOutputs.forEach(l -> builder.append(l.airlineName).append(";").append(l.percentage).append("\n"));
         return builder.toString();
     }
 
@@ -92,13 +83,6 @@ public class Query2 extends BaseQuery {
         public queryOutput(final String airlineName, final Double percentage) {
             this.airlineName = airlineName;
             this.percentage = percentage;
-        }
-
-        public String getAirlineName() {
-            return airlineName;
-        }
-        public Double getPorcentage() {
-            return percentage;
         }
 
         @Override

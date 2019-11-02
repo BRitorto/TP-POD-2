@@ -21,18 +21,17 @@ import java.util.concurrent.ExecutionException;
 
 public class Query5 extends BaseQuery {
 
-    private IList<Movement> movements;
-    private Set<String> airports;
-    private CommandLine arguments;
-    private PrintResult printResult;
+    private final IList<Movement> movements;
+    private final Set<String> airports;
+    private final CommandLine arguments;
+    private final PrintResult printResult;
+    private List<queryOutput> queryOutputs;
 
-    List<queryOutput> qO;
-
-    public Query5(IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments,
-                  PrintResult printResult, IList<Airport> airports) {
+    public Query5(final IList<Movement> movements, final HazelcastInstance hazelcastInstance,
+                  final CommandLine arguments, final PrintResult printResult, final IList<Airport> airports) {
         super(hazelcastInstance, arguments);
         this.airports = new HashSet<>();
-        for(Airport airport : airports){
+        for(final Airport airport : airports){
             if(airport.getOaci().isPresent()){
                 this.airports.add(airport.getOaci().get());
             }
@@ -46,69 +45,50 @@ public class Query5 extends BaseQuery {
     @Override
     public void run() throws ExecutionException, InterruptedException {
 
-        /* Create Query 5 Job */
-        JobTracker jobTracker = getJobTracker();
-
-        /* MapReduce Key Value Source */
-        KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);
-
-        Integer n = Integer.valueOf(arguments.getOptionValue("n"));
-
-        /* MapReduce Job Creation */
-        Job<String, Movement> job = jobTracker.newJob(source);
-        ICompletableFuture<List<Map.Entry<String, Double>>> future = job
+        final JobTracker jobTracker = getJobTracker();
+        final KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);
+        final Integer n = Integer.valueOf(arguments.getOptionValue("n"));
+        final Job<String, Movement> job = jobTracker.newJob(source);
+        final ICompletableFuture<List<Map.Entry<String, Double>>> future = job
                 .mapper(new Query5Mapper(airports))
                 .combiner(new Query5CombinerFactory())
                 .reducer(new Query5ReducerFactory())
                 .submit(new Query5Collator(n));
-
-        /* Wait and retrieve the result, OACI movement result */
-        List<Map.Entry<String, Double>> result = future.get();
-
-        qO = getResult(result);
-
-        /* write file */
+        final List<Map.Entry<String, Double>> result = future.get();
+        queryOutputs = getResult(result);
         writeResult();
-
     }
 
     @Override
     public void writeResult(){
-        writResult(qO);
+        writeResult(queryOutputs);
     }
 
-    private void writResult(List<queryOutput> results){
+    private void writeResult(final List<queryOutput> results){
         printResult.append("OACI;Porcentaje\n");
         results.forEach(p -> printResult.append(p+"\n"));
     }
 
     @Override
     public String getResult() {
-
-        StringBuilder builder = new StringBuilder();
-
-        qO.forEach(l -> builder.append(l.OACI).append(";").append(l.percentage).append("\n"));
-
+        final StringBuilder builder = new StringBuilder();
+        queryOutputs.forEach(l -> builder.append(l.OACI).append(";").append(l.percentage).append("\n"));
         return builder.toString();
     }
 
-    public List<queryOutput> getResult(List<Map.Entry<String, Double>> result){
-
-        List<queryOutput> queryOutputList = new ArrayList<>();
-
-        for(Map.Entry<String, Double> entry : result) {
+    private List<queryOutput> getResult(final List<Map.Entry<String, Double>> result){
+        final List<queryOutput> queryOutputList = new ArrayList<>();
+        for(final Map.Entry<String, Double> entry : result) {
             queryOutputList.add(new queryOutput(entry.getKey(), entry.getValue()));
         }
-
         return queryOutputList;
     }
 
-    /* Output information */
     private class queryOutput{
-        String OACI;
-        Double percentage;
+        private final String OACI;
+        private final Double percentage;
 
-        public queryOutput(String OACI, Double percentage) {
+        public queryOutput(final String OACI, final Double percentage) {
             this.OACI = OACI;
             this.percentage = percentage;
         }

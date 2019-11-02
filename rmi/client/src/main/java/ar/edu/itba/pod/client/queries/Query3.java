@@ -22,14 +22,11 @@ import java.util.concurrent.ExecutionException;
 
 public class Query3 extends BaseQuery {
 
-    private final static int id = 3;
-    /* This interface defines the IList object that is used throughout Content Server
-    for database queries and other representations of tabular data.**/
-    private IList<Movement> movements;
-    private CommandLine arguments;
-    private PrintResult printResult;
+    private final IList<Movement> movements;
+    private final CommandLine arguments;
+    private final PrintResult printResult;
 
-    List<queryOutput> qO;
+    private List<queryOutput> queryOutputs;
 
     public Query3(IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments,
                   PrintResult printResult) {
@@ -50,11 +47,11 @@ public class Query3 extends BaseQuery {
         /* Group by thousand of movements -> Movements-Group:OACIs */
         Map<Integer, List<String>> groupOfMovements = getGroupMovements(jobTracker,airportMovements);
 
-        qO = getResult(groupOfMovements);
+        queryOutputs = getResult(groupOfMovements);
 
         writeResult();
 
-        for(queryOutput q : qO){
+        for(queryOutput q : queryOutputs){
             System.out.println(q);
         }
     }
@@ -101,7 +98,7 @@ public class Query3 extends BaseQuery {
 
     @Override
     public void writeResult() throws IOException {
-        writResult(qO);
+        writResult(queryOutputs);
     }
 
     private void writResult(List<queryOutput> results){
@@ -113,7 +110,7 @@ public class Query3 extends BaseQuery {
     public String getResult() {
         StringBuilder builder = new StringBuilder();
 
-        qO.forEach(l -> builder.append(l.numberOfMovements).append(";").append(l.OACI1).
+        queryOutputs.forEach(l -> builder.append(l.numberOfMovements).append(";").append(l.OACI1).
                 append(";").append(l.OACI2).append("\n"));
 
         return builder.toString();

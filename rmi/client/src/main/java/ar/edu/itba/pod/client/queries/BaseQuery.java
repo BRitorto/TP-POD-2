@@ -11,14 +11,14 @@ public abstract class BaseQuery implements Query {
     protected final HazelcastInstance hazelcastInstance;
     private final CommandLine arguments;
 
-    public BaseQuery(HazelcastInstance hazelcastInstance, CommandLine arguments) {
+    public BaseQuery(final HazelcastInstance hazelcastInstance, final CommandLine arguments) {
         this.hazelcastInstance = hazelcastInstance;
         this.arguments = arguments;
     }
 
     @Override
     public void writeResult() throws IOException {
-        FileWriter fileWriter = new FileWriter(arguments.getOptionValue("outPath"));
+        final FileWriter fileWriter = new FileWriter(arguments.getOptionValue("outPath"));
         fileWriter.write(getResult());
         fileWriter.close();
     }
@@ -26,10 +26,4 @@ public abstract class BaseQuery implements Query {
     public JobTracker getJobTracker() {
         return hazelcastInstance.getJobTracker("g3_" + "query" + arguments.getOptionValue("query"));
     }
-
-    public String getCollectionName() {
-        return "g3_data";
-    }
-
-
 }
