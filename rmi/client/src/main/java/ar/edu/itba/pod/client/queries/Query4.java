@@ -20,12 +20,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Query4 extends BaseQuery {
-    private static int id = 4;
     private final IList<Movement> movements;
     private final CommandLine arguments;
     private final PrintResult printResult;
     private List<queryOutput> q4;
-
 
     public Query4(final IList<Movement> movements, final HazelcastInstance hazelcastInstance,
                   final CommandLine arguments, final PrintResult printResult) {
@@ -43,13 +41,12 @@ public class Query4 extends BaseQuery {
         writeResult();
     }
 
-
     @Override
     public void writeResult() {
-        writResult(q4);
+        writeResult(q4);
     }
 
-    private void writResult(List<queryOutput> results){
+    private void writeResult(List<queryOutput> results){
         printResult.append("OACI;Despegues\n");
         results.forEach(p -> printResult.append(p+"\n"));
     }
@@ -66,7 +63,7 @@ public class Query4 extends BaseQuery {
         return future.get();
     }
 
-    private List<queryOutput> getResult(List<Map.Entry<String, Integer>> result){
+    private List<queryOutput> getResult(final List<Map.Entry<String, Integer>> result){
         final List<queryOutput> queryOutputList = new ArrayList<>();
         for(Map.Entry<String, Integer> entry : result) {
             queryOutputList.add(new queryOutput(entry.getKey(), entry.getValue()));
@@ -81,8 +78,8 @@ public class Query4 extends BaseQuery {
         return builder.toString();    }
 
     private static class queryOutput implements Comparable<queryOutput> {
-        final String OACIDestination;
-        final int numberOfMovements;
+        private final String OACIDestination;
+        private final int numberOfMovements;
 
         public queryOutput(final String OACIDestination, final int numberOfMovements) {
             this.OACIDestination = OACIDestination;

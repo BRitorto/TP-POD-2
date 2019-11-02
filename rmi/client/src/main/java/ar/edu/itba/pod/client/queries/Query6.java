@@ -20,15 +20,15 @@ import java.util.concurrent.ExecutionException;
 
 public class Query6 extends BaseQuery {
 
-    private IList<Airport> airports;
-    private IList<Movement> movements;
-    private CommandLine arguments;
-    private PrintResult printResult;
+    private final IList<Airport> airports;
+    private final IList<Movement> movements;
+    private final CommandLine arguments;
+    private final PrintResult printResult;
+    private List<queryOutput> queryOutputs;
 
-    List<queryOutput> qO;
-
-    public Query6(IList<Airport> airports, IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments,
-                  PrintResult printResult) {
+    public Query6(final IList<Airport> airports, final IList<Movement> movements,
+                  final HazelcastInstance hazelcastInstance, final CommandLine arguments,
+                  final PrintResult printResult) {
         super(hazelcastInstance, arguments);
         this.airports = airports;
         this.movements = movements;
@@ -38,96 +38,64 @@ public class Query6 extends BaseQuery {
 
     @Override
     public void run() throws ExecutionException, InterruptedException {
-
-        /* Create Query 1 Job */
-        JobTracker jobTracker = getJobTracker();
-
-        Map<String, String> oaciProvinceMap = oaciProvinceMap();
-
-        /* MapReduce Key Value Source */
-        KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);
-
-        Integer min = Integer.valueOf(arguments.getOptionValue("min"));
-
-        /* MapReduce Job Creation */
-        Job<String, Movement> job = jobTracker.newJob(source);
-        ICompletableFuture<Set<Map.Entry<ProvinceTuple, Integer>>> future = job
+        final JobTracker jobTracker = getJobTracker();
+        final Map<String, String> oaciProvinceMap = oaciProvinceMap();
+        final KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);
+        final Integer min = Integer.valueOf(arguments.getOptionValue("min"));
+        final Job<String, Movement> job = jobTracker.newJob(source);
+        final ICompletableFuture<Set<Map.Entry<ProvinceTuple, Integer>>> future = job
                 .mapper(new Query6Mapper(oaciProvinceMap))
                 .combiner(new Query6CombinerFactory())
                 .reducer(new Query6ReducerFactory())
                 .submit(new Query6Collator(min));
-
-        /* Wait and retrieve the result, OACI movement result */
-        Set<Map.Entry<ProvinceTuple, Integer>> result = future.get();
-
-        qO = getResult(result);
-
-        /* write file */
+        final Set<Map.Entry<ProvinceTuple, Integer>> result = future.get();
+        queryOutputs = getResult(result);
         writeResult();
     }
 
     private Map<String, String> oaciProvinceMap(){
-        Map<String, String> m = new HashMap<>();
-
-        for(Airport airport : airports) {
+        final Map<String, String> m = new HashMap<>();
+        for(final Airport airport : airports) {
             airport.getOaci().ifPresent(OACI -> m.put(OACI,airport.getProvince()));
         }
-
         return m;
     }
 
     @Override
     public void writeResult() {
-        writResult(qO);
+        writeResult(queryOutputs);
     }
 
-    private void writResult(List<queryOutput> results){
+    private void writeResult(final List<queryOutput> results){
         printResult.append("Provincia A;Provincia B;Movimientos\n");
         results.forEach(p -> printResult.append(p+"\n"));
     }
 
     @Override
     public String getResult() {
-        StringBuilder builder = new StringBuilder();
-
-        qO.forEach(l -> builder.append(l.provinceA).append(";").append(l.provinceB).
+        final StringBuilder builder = new StringBuilder();
+        queryOutputs.forEach(l -> builder.append(l.provinceA).append(";").append(l.provinceB).
                 append(";").append(l.movements).append("\n"));
-
         return builder.toString();
     }
 
-    public List<queryOutput> getResult(Set<Map.Entry<ProvinceTuple, Integer>> result){
-
-        List<queryOutput> queryOutputList = new ArrayList<>();
-
-        for(Map.Entry<ProvinceTuple, Integer> entry : result) {
+    private List<queryOutput> getResult(final Set<Map.Entry<ProvinceTuple, Integer>> result){
+        final List<queryOutput> queryOutputList = new ArrayList<>();
+        for(final Map.Entry<ProvinceTuple, Integer> entry : result) {
                 queryOutputList.add(new queryOutput(entry.getKey().getProvince1(), entry.getKey().getProvince2(), entry.getValue()));
         }
-
         return queryOutputList;
     }
 
     private class queryOutput {
-        String provinceA;
-        String provinceB;
-        int movements;
+        private final String provinceA;
+        private final String provinceB;
+        private final int movements;
 
-        public queryOutput(String provinceA, String provinceB, int movements) {
+        public queryOutput(final String provinceA, final String provinceB, final int movements) {
             this.provinceA = provinceA;
             this.provinceB = provinceB;
             this.movements = movements;
-        }
-
-        public String getProvinceA() {
-            return provinceA;
-        }
-
-        public String getProvinceB() {
-            return provinceB;
-        }
-
-        public int getMovements() {
-            return movements;
         }
 
         @Override

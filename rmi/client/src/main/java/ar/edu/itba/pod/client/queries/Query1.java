@@ -19,15 +19,15 @@ import java.util.concurrent.ExecutionException;
 
 public class Query1 extends BaseQuery {
 
-    private IList<Airport> airports;
-    private IList<Movement> movements;
-    private CommandLine arguments;
-    private PrintResult printResult;
+    private final IList<Airport> airports;
+    private final IList<Movement> movements;
+    private final CommandLine arguments;
+    private final PrintResult printResult;
+    private List<queryOutput> queryOutputs;
 
-    List<queryOutput> qO;
-
-    public Query1(IList<Airport> airports, IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments,
-                  PrintResult printResult) {
+    public Query1(final IList<Airport> airports, final IList<Movement> movements,
+                  final HazelcastInstance hazelcastInstance, final CommandLine arguments,
+                  final PrintResult printResult) {
         super(hazelcastInstance, arguments);
         this.airports = airports;
         this.movements = movements;
@@ -37,85 +37,67 @@ public class Query1 extends BaseQuery {
 
     @Override
     public void run() throws ExecutionException, InterruptedException {
-
         /* Create Query 1 Job */
-        JobTracker jobTracker = getJobTracker();
-
+        final JobTracker jobTracker = getJobTracker();
         /* MapReduce Key Value Source */
-        KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);
-
+        final KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);
         /* MapReduce Job Creation */
-        Job<String, Movement> job = jobTracker.newJob(source);
-        ICompletableFuture<Map<String, Integer>> future = job
+        final Job<String, Movement> job = jobTracker.newJob(source);
+        final ICompletableFuture<Map<String, Integer>> future = job
                 .mapper(new Query1Mapper())
                 .combiner(new Query1CombinerFactory())
                 .reducer(new Query1ReducerFactory())
                 .submit();
-
-        /* Wait and retrieve the result, OACI movement result */
-        Map<String, Integer> result = future.get();
-
-        qO = getResult(result);
-
-        /* write file */
+        final Map<String, Integer> result = future.get();
+        queryOutputs = getResult(result);
         writeResult();
     }
 
     private Map<String, String> oaciNameMap(){
-        Map<String, String> m = new HashMap<>();
-
-        for(Airport airport : airports) {
+        final Map<String, String> m = new HashMap<>();
+        for(final Airport airport : airports) {
             airport.getOaci().ifPresent(OACI -> m.put(OACI,airport.getName()));
         }
-
         return m;
     }
 
     @Override
     public void writeResult() {
-        writResult(qO);
+        writeResult(queryOutputs);
     }
 
-    private void writResult(List<queryOutput> results){
+    private void writeResult(final List<queryOutput> results){
         printResult.append("OACI;Denominación;Movimientos\n");
         results.forEach(p -> printResult.append(p+"\n"));
     }
     
     @Override
     public String getResult() {
-        StringBuilder builder = new StringBuilder();
-
-        qO.forEach(l -> builder.append(l.OACI).append(";").append(l.name).
-                append(";").append(l.sum).append("\n"));
-
+        final StringBuilder builder = new StringBuilder();
+        queryOutputs.forEach(l -> builder.append(l.OACI).append(";").append(l.name).append(";").append(l.sum).append("\n"));
         return builder.toString();
     }
 
-    public List<queryOutput> getResult(Map<String, Integer> result){
+    private List<queryOutput> getResult(final Map<String, Integer> result){
+        final List<queryOutput> queryOutputList = new ArrayList<>();
+        final Map<String, String> oaciNameMap = oaciNameMap();
 
-        List<queryOutput> queryOutputList = new ArrayList<>();
-        Map<String, String> oaciNameMap = oaciNameMap();
-
-        for(String OACI : result.keySet()) {
-            String name = oaciNameMap.get(OACI);
+        for(final String OACI : result.keySet()) {
+            final String name = oaciNameMap.get(OACI);
             if(name != null) {
                 queryOutputList.add(new queryOutput(OACI, name, result.get(OACI)));
             }
         }
-
-        /* Sort result */
-        queryOutputList.sort(Comparator.comparing(queryOutput::getSum).reversed().
-                thenComparing(queryOutput::getOACI));
-
+        queryOutputList.sort(Comparator.comparing(queryOutput::getSum).reversed().thenComparing(queryOutput::getOACI));
         return queryOutputList;
     }
 
-    private class queryOutput{
+    private static class queryOutput{
         String OACI;
         String name;
         int sum;
 
-        public queryOutput(String OACI, String name, Integer sum) {
+        public queryOutput(final String OACI, final String name, final Integer sum) {
             this.OACI = OACI;
             this.name = name;
             this.sum = sum;
