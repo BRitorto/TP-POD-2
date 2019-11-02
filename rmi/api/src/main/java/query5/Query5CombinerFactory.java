@@ -6,29 +6,30 @@ import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 import query1.Query1CombinerFactory;
 
-public class Query5CombinerFactory implements CombinerFactory<String, Integer, Integer> {
+public class Query5CombinerFactory implements CombinerFactory<String, Boolean, Long[]> {
 
-    @Override
-    public Combiner<Integer, Integer> newCombiner(String s) {
-
+    public Combiner<Boolean, Long[]> newCombiner(String s) {
         return new Query5Combiner();
     }
 
-    private class Query5Combiner extends Combiner<Integer, Integer>{
-        private int sum = 0;
+    private class Query5Combiner extends Combiner<Boolean, Long[]>{
+        private long privateMovements;
+        private long totalMovements;
 
         @Override
-        public void combine(Integer integer) {
-            sum += integer;
+        public void combine(Boolean isPrivate) {
+            if(isPrivate)
+                privateMovements++;
+                totalMovements++;
         }
 
         @Override
-        public Integer finalizeChunk() {
-            return sum;
+        public Long[] finalizeChunk() {
+            return new Long[] { privateMovements, totalMovements };
         }
 
         public void reset(){
-            sum = 0;
+            totalMovements = privateMovements = 0;
         }
     }
 }

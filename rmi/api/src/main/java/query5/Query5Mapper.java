@@ -3,31 +3,31 @@ package query5;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 import model.FlightClassEnum;
-import model.FlightEnum;
 import model.Movement;
 
-import java.util.Optional;
+import java.util.Set;
 
-public class Query5Mapper implements Mapper<String, Movement, String, Integer> {
+public class Query5Mapper implements Mapper<Integer, Movement, String, Boolean>  {
 
-    private static final int ONE = 1;
-    private static final int ZERO = 0;
-    public static int total = 0;
 
+    private final Set<String> airports;
+
+    public Query5Mapper(Set<String> airports) {
+        this.airports = airports;
+    }
 
     @Override
-    public void map(String s, Movement movement, Context<String, Integer> context) {
-
-        FlightClassEnum flightclass = movement.getFlightClass();
-
-        if(flightclass == FlightClassEnum.PRIVATE){
-//            total++;
-            context.emit(movement.getStartOACI(), ONE);
-            context.emit(movement.getEndOACI(), ONE);
-        }else{
-            context.emit(movement.getStartOACI(), ZERO);
-            context.emit(movement.getEndOACI(), ZERO);
+    public void map(Integer key, Movement movement, Context<String, Boolean> context) {
+        // Emit OACI designator and a boolean describing whether or not a flight is private
+        if(airports.contains(movement.getStartOACI())) {
+            context.emit(movement.getStartOACI(), isPrivateFlight(movement));
         }
+        if(airports.contains(movement.getEndOACI())) {
+            context.emit(movement.getEndOACI(), isPrivateFlight(movement));
+        }
+    }
 
+    private boolean isPrivateFlight(final Movement movement) {
+        return movement.getFlightClass().equals(FlightClassEnum.PRIVATE);
     }
 }

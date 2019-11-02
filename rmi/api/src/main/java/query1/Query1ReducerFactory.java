@@ -13,7 +13,7 @@ public class Query1ReducerFactory implements ReducerFactory<String, Integer, Int
 
     private class Query1Reducer extends Reducer<Integer, Integer>{
 
-        private volatile int sum;
+        private volatile int sum = 0;
 
         @Override
         public void beginReduce () {

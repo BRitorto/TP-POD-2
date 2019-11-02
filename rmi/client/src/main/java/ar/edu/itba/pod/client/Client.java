@@ -11,6 +11,7 @@ import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
+import com.hazelcast.core.IMap;
 import model.Airport;
 import model.Movement;
 import org.apache.commons.cli.*;
@@ -20,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -169,7 +172,13 @@ public class Client {
             case 3:
                 return new Query3(movements, hazelcastInstance, arguments, printResult);
             case 5:
-                return new Query5(movements, hazelcastInstance, arguments, printResult, airports);
+                Instant now = Instant.now();
+                final IMap<Integer, Movement> remoteMovements;
+                remoteMovements = hazelcastInstance.getMap("mv-" + now);
+                for(int i = 0; i < movements.size(); i++)
+                    remoteMovements.set(i, movements.get(i));
+
+                return new Query5(remoteMovements, hazelcastInstance, arguments, printResult, airports);
             default:
                 throw new IllegalArgumentException("Invalid query number " + queryNumber + ". Insert a value from 1 to 6.");
         }

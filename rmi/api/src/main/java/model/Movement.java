@@ -18,8 +18,8 @@ public class Movement implements DataSerializable {
 
     public Movement(){ }
 
-    public Movement(Optional<FlightEnum> flightType, MovementEnum movementType, String startOACI, String endOACI, String airlineName,
-                    FlightClassEnum flightClass) {
+    public Movement(Optional<FlightEnum> flightType, MovementEnum movementType, String startOACI, String endOACI,
+                    String airlineName, FlightClassEnum flightClass) {
         this.flightType = flightType;
         this.movementType = movementType;
         this.startOACI = startOACI;
