@@ -40,9 +40,6 @@ public class Query4 extends BaseQuery {
         final JobTracker jobTracker = getJobTracker();
         final List<Map.Entry<String, Integer>> airportMovements = getMovements(jobTracker, movements);
         q4 = getResult(airportMovements);
-        for(queryOutput q : q4){
-            System.out.println(q);
-        }
         writeResult();
     }
 
