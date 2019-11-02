@@ -5,6 +5,9 @@ import com.hazelcast.mapreduce.ReducerFactory;
 
 public class Query5ReducerFactory implements ReducerFactory<String, Long[], Double> {
 
+    private static final int ONE = 1;
+    private static final int ZERO = 0;
+
     @Override
     public Reducer<Long[], Double> newReducer(String key) {
         return new Query5Reducer();
@@ -22,8 +25,8 @@ public class Query5ReducerFactory implements ReducerFactory<String, Long[], Doub
 
         @Override
         public void reduce(Long[] flights) {
-            privateFlight += flights[0];
-            total += flights[1];
+            privateFlight += flights[ZERO];
+            total += flights[ONE];
         }
 
         @Override

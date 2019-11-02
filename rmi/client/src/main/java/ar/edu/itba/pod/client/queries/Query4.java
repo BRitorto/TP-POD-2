@@ -40,7 +40,21 @@ public class Query4 extends BaseQuery {
         final JobTracker jobTracker = getJobTracker();
         final List<Map.Entry<String, Integer>> airportMovements = getMovements(jobTracker, movements);
         q4 = getResult(airportMovements);
+        for(queryOutput q : q4){
+            System.out.println(q);
+        }
         writeResult();
+    }
+
+
+    @Override
+    public void writeResult() {
+        writResult(q4);
+    }
+
+    private void writResult(List<queryOutput> results){
+        printResult.append("OACI;Despegues\n");
+        results.forEach(p -> printResult.append(p+"\n"));
     }
 
     private List<Map.Entry<String, Integer>> getMovements(final JobTracker jobTracker, final IList<Movement> movements)
@@ -81,6 +95,11 @@ public class Query4 extends BaseQuery {
         @Override
         public int compareTo(final queryOutput queryOutput) {
             return queryOutput.numberOfMovements - this.numberOfMovements;
+        }
+
+        @Override
+        public String toString() {
+            return OACIDestination + ';' + numberOfMovements;
         }
     }
 }
