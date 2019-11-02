@@ -172,13 +172,7 @@ public class Client {
             case 3:
                 return new Query3(movements, hazelcastInstance, arguments, printResult);
             case 5:
-                Instant now = Instant.now();
-                final IMap<Integer, Movement> remoteMovements;
-                remoteMovements = hazelcastInstance.getMap("mv-" + now);
-                for(int i = 0; i < movements.size(); i++)
-                    remoteMovements.set(i, movements.get(i));
-
-                return new Query5(remoteMovements, hazelcastInstance, arguments, printResult, airports);
+                return new Query5(movements, hazelcastInstance, arguments, printResult, airports);
             default:
                 throw new IllegalArgumentException("Invalid query number " + queryNumber + ". Insert a value from 1 to 6.");
         }

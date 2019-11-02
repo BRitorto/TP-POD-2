@@ -7,7 +7,7 @@ import model.Movement;
 
 import java.util.Set;
 
-public class Query5Mapper implements Mapper<Integer, Movement, String, Boolean>  {
+public class Query5Mapper implements Mapper<String, Movement, String, Boolean>  {
 
 
     private final Set<String> airports;
@@ -17,7 +17,8 @@ public class Query5Mapper implements Mapper<Integer, Movement, String, Boolean> 
     }
 
     @Override
-    public void map(Integer key, Movement movement, Context<String, Boolean> context) {
+    public void map(String key, Movement movement, Context<String, Boolean> context) {
+
         // Emit OACI designator and a boolean describing whether or not a flight is private
         if(airports.contains(movement.getStartOACI())) {
             context.emit(movement.getStartOACI(), isPrivateFlight(movement));

@@ -9,7 +9,6 @@ public class Query5Collator implements Collator<Map.Entry<String, Double>, List<
     private final int n;
 
     public Query5Collator(final int n) {
-        super();
         this.n = n;
     }
 

@@ -24,7 +24,6 @@ import query5.Query5ReducerFactory;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 public class Query5 extends BaseQuery {
 
@@ -33,11 +32,10 @@ public class Query5 extends BaseQuery {
     private Set<String> airports;
     private CommandLine arguments;
     private PrintResult printResult;
-    private IMap<Integer, Movement> movementMap;
 
     List<queryOutput> qO;
 
-    public Query5(IMap<Integer, Movement> movementMap, HazelcastInstance hazelcastInstance, CommandLine arguments,
+    public Query5(IList<Movement> movements, HazelcastInstance hazelcastInstance, CommandLine arguments,
                   PrintResult printResult, IList<Airport> airports) {
         super(hazelcastInstance, arguments);
         this.airports = new HashSet<>();
@@ -46,10 +44,9 @@ public class Query5 extends BaseQuery {
                 this.airports.add(airport.getOaci().get());
             }
         }
-//        this.movements = movements;
+        this.movements = movements;
         this.arguments = arguments;
         this.printResult = printResult;
-        this.movementMap = movementMap;
     }
 
     public static int getId() {
@@ -79,13 +76,12 @@ public class Query5 extends BaseQuery {
         JobTracker jobTracker = getJobTracker();
 
         /* MapReduce Key Value Source */
-        KeyValueSource<Integer, Movement> source = KeyValueSource.fromMap(movementMap);
+        KeyValueSource<String, Movement> source = KeyValueSource.fromList(movements);
 
         Integer n = Integer.valueOf(arguments.getOptionValue("n"));
 
-
         /* MapReduce Job Creation */
-        Job<Integer, Movement> job = jobTracker.newJob(source);
+        Job<String, Movement> job = jobTracker.newJob(source);
         ICompletableFuture<List<Map.Entry<String, Double>>> future = job
                 .mapper(new Query5Mapper(airports))
                 .combiner(new Query5CombinerFactory())
@@ -98,7 +94,7 @@ public class Query5 extends BaseQuery {
         qO = getResult(result);
 
         /* write file */
-        writeResult();
+//        writeResult();
 
         for(queryOutput q : qO){
             System.out.println(q);
