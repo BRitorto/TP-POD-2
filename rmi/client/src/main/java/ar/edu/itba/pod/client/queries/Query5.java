@@ -4,18 +4,12 @@ import ar.edu.itba.pod.client.utils.PrintResult;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.core.IList;
-import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
 import model.Airport;
-import model.FlightClassEnum;
 import model.Movement;
 import org.apache.commons.cli.CommandLine;
-import query1.Query1CombinerFactory;
-import query1.Query1Mapper;
-import query1.Query1ReducerFactory;
-import query2.Query2Collator;
 import query5.Query5Collator;
 import query5.Query5CombinerFactory;
 import query5.Query5Mapper;
@@ -27,7 +21,6 @@ import java.util.concurrent.ExecutionException;
 
 public class Query5 extends BaseQuery {
 
-    private final static int id = 5;
     private IList<Movement> movements;
     private Set<String> airports;
     private CommandLine arguments;
@@ -49,28 +42,9 @@ public class Query5 extends BaseQuery {
         this.printResult = printResult;
     }
 
-    public static int getId() {
-        return id;
-    }
-
-    public IList<Movement> getMovements() {
-        return movements;
-    }
-
-    public CommandLine getArguments() {
-        return arguments;
-    }
-
-    public PrintResult getPrintResult() {
-        return printResult;
-    }
-
-    public Set<String> getAirports() {
-        return airports;
-    }
 
     @Override
-    public void run() throws ExecutionException, InterruptedException, IOException {
+    public void run() throws ExecutionException, InterruptedException {
 
         /* Create Query 5 Job */
         JobTracker jobTracker = getJobTracker();
@@ -94,12 +68,18 @@ public class Query5 extends BaseQuery {
         qO = getResult(result);
 
         /* write file */
-//        writeResult();
+        writeResult();
 
-        for(queryOutput q : qO){
-            System.out.println(q);
-        }
+    }
 
+    @Override
+    public void writeResult(){
+        writResult(qO);
+    }
+
+    private void writResult(List<queryOutput> results){
+        printResult.append("OACI;Porcentaje\n");
+        results.forEach(p -> printResult.append(p+"\n"));
     }
 
     @Override
@@ -123,27 +103,19 @@ public class Query5 extends BaseQuery {
         return queryOutputList;
     }
 
-
+    /* Output information */
     private class queryOutput{
         String OACI;
         Double percentage;
 
-        public queryOutput(String OACI, Double porcentage) {
+        public queryOutput(String OACI, Double percentage) {
             this.OACI = OACI;
-            this.percentage = porcentage;
-        }
-
-        public String getOACI() {
-            return OACI;
-        }
-
-        public Double getPorcentage() {
-            return percentage;
+            this.percentage = percentage;
         }
 
         @Override
         public String toString() {
-            return OACI + " ; " + String.format("%.2f", percentage);
+            return OACI + ";" + String.format(Locale.ROOT, "%.2f", percentage)+"%";
         }
     }
 }

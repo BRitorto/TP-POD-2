@@ -14,11 +14,16 @@ public class Query5Collator implements Collator<Map.Entry<String, Double>, List<
 
     @Override
     public List<Map.Entry<String, Double>> collate(Iterable<Map.Entry<String, Double>> iterable) {
-        final List<Map.Entry<String, Double>> sortedEntries = new ArrayList<>();
-        iterable.forEach(sortedEntries::add);
-        sortedEntries.sort(Comparator
-                .comparing(Map.Entry<String, Double>::getValue)
+        final List<Map.Entry<String, Double>> percentages = new ArrayList<>();
+        iterable.forEach(percentages::add);
+        percentages.sort(Comparator.comparing(Map.Entry<String, Double>::getValue)
                 .thenComparing(Map.Entry::getKey));
-        return sortedEntries.subList(0, n);
+
+        percentages.remove("N/A");
+
+        final List<Map.Entry<String, Double>> result = new ArrayList<>(percentages.subList(0,n));
+        percentages.clear();
+
+        return result;
     }
 }

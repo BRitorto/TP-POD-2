@@ -11,25 +11,24 @@ public class Query5ReducerFactory implements ReducerFactory<String, Long[], Doub
     }
 
     private static class Query5Reducer extends Reducer<Long[], Double> {
-        private static final int PRIVATE_MOVEMENTS = 0;
-        private static final int TOTAL_MOVEMENTS = 1;
-        private volatile int totalMovements;
-        private volatile int privateMovements;
+        private volatile int total;
+        private volatile int privateFlight;
 
         @Override
         public void beginReduce() {
-            totalMovements = privateMovements = 0;
+            total = 0;
+            privateFlight = 0;
         }
 
         @Override
         public void reduce(Long[] flights) {
-            privateMovements += flights[PRIVATE_MOVEMENTS];
-            totalMovements += flights[TOTAL_MOVEMENTS];
+            privateFlight += flights[0];
+            total += flights[1];
         }
 
         @Override
         public Double finalizeReduce() {
-            return Math.floor((privateMovements * 100 / (double) totalMovements) * 100) / 100;
+            return Math.floor((privateFlight * 100 / (double) total) * 100) / 100;
         }
     }
 }

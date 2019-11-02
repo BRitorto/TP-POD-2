@@ -14,13 +14,11 @@ import query1.Query1Mapper;
 import query1.Query1ReducerFactory;
 import org.apache.commons.cli.CommandLine;;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class Query1 extends BaseQuery {
 
-    private final static int id = 1;
     private IList<Airport> airports;
     private IList<Movement> movements;
     private CommandLine arguments;
@@ -38,7 +36,7 @@ public class Query1 extends BaseQuery {
     }
 
     @Override
-    public void run() throws ExecutionException, InterruptedException, IOException {
+    public void run() throws ExecutionException, InterruptedException {
 
         /* Create Query 1 Job */
         JobTracker jobTracker = getJobTracker();
@@ -67,14 +65,14 @@ public class Query1 extends BaseQuery {
         Map<String, String> m = new HashMap<>();
 
         for(Airport airport : airports) {
-            airport.getOaci().ifPresent(oaci -> m.put(oaci,airport.getName()));
+            airport.getOaci().ifPresent(OACI -> m.put(OACI,airport.getName()));
         }
 
         return m;
     }
 
     @Override
-    public void writeResult() throws IOException {
+    public void writeResult() {
         writResult(qO);
     }
 
@@ -98,10 +96,10 @@ public class Query1 extends BaseQuery {
         List<queryOutput> queryOutputList = new ArrayList<>();
         Map<String, String> oaciNameMap = oaciNameMap();
 
-        for(String oaci : result.keySet()) {
-            String name = oaciNameMap.get(oaci);
+        for(String OACI : result.keySet()) {
+            String name = oaciNameMap.get(OACI);
             if(name != null) {
-                queryOutputList.add(new queryOutput(oaci, name, result.get(oaci)));
+                queryOutputList.add(new queryOutput(OACI, name, result.get(OACI)));
             }
         }
 
@@ -125,10 +123,6 @@ public class Query1 extends BaseQuery {
 
         public String getOACI() {
             return OACI;
-        }
-
-        public String getName() {
-            return name;
         }
 
         public int getSum() {
