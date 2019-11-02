@@ -1,10 +1,7 @@
 package ar.edu.itba.pod.client.utils;
 
 import com.hazelcast.core.IList;
-import model.Airport;
-import model.FlightEnum;
-import model.Movement;
-import model.MovementEnum;
+import model.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,7 +37,8 @@ public class MovementCsvParser implements CsvParser {
     private void getMovementData(String line) {
         String[] column = line.split(";");
         /* Info we need for queries */
-        localMovements.add(new Movement(flightType(column[3]), movementType(column[4]), column[5], column[6], column[7]));
+        localMovements.add(new Movement(flightType(column[3]), movementType(column[4]), column[5], column[6], column[7],
+                flightClass(column[2])));
     }
 
     private Optional<FlightEnum> flightType(String s) {
@@ -63,5 +61,13 @@ public class MovementCsvParser implements CsvParser {
         }
 
         throw new IllegalArgumentException("Illegal Movement Type: " + s);
+    }
+
+    private FlightClassEnum flightClass (String s){
+        if(s.contains("Privado")){
+            return FlightClassEnum.PRIVATE;
+        }else{
+            return FlightClassEnum.NOT_PRIVATE;
+        }
     }
 }
