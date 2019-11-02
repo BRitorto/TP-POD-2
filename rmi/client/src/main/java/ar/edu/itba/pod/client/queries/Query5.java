@@ -15,7 +15,7 @@ import query5.Query5CombinerFactory;
 import query5.Query5Mapper;
 import query5.Query5ReducerFactory;
 
-import java.io.IOException;
+
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
