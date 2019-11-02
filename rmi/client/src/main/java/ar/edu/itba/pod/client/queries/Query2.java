@@ -58,9 +58,6 @@ public class Query2 extends BaseQuery {
         qO = getResult(result);
         /* write file */
         writeResult();
-        for(queryOutput q : qO){
-            System.out.println(q);
-        }
     }
 
     @Override
