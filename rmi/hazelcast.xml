@@ -62,7 +62,7 @@
             </aws>
         </join>
         <interfaces enabled="true">
-            <interface>10.*.*.*</interface>
+            <interface>192.*.*.*</interface>
         </interfaces>
         <ssl enabled="false"/>
         <socket-interceptor enabled="false"/>
