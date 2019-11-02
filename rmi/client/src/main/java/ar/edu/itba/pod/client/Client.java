@@ -164,13 +164,13 @@ public class Client {
             case 1:
                 return new Query1(airports, movements, hazelcastInstance, arguments, printResult);
             case 2:
-                Optional<String> n = Optional.ofNullable(arguments.getOptionValue(N_NAME));
-                if(!n.isPresent()){
-                    throw new IllegalArgumentException("Missing argument N");
-                }
+                checkParameterN(arguments);
                 return new Query2(movements, hazelcastInstance, arguments, printResult);
             case 3:
                 return new Query3(movements, hazelcastInstance, arguments, printResult);
+            case 4:
+                checkParameterN(arguments);
+                return new Query4(movements, hazelcastInstance, arguments, printResult);
             case 5:
                 return new Query5(movements, hazelcastInstance, arguments, printResult, airports);
             case 6:
@@ -184,4 +184,10 @@ public class Client {
         }
     }
 
+    private static void checkParameterN(final CommandLine arguments) {
+        final Optional<String> n = Optional.ofNullable(arguments.getOptionValue(N_NAME));
+        if (!n.isPresent()) {
+            throw new IllegalArgumentException("Missing argument N");
+        }
+    }
 }
