@@ -14,7 +14,7 @@ public class Query6Collator implements Collator<Map.Entry<ProvinceTuple, Integer
 
     @Override
     public Set<Map.Entry<ProvinceTuple, Integer>> collate(Iterable<Map.Entry<ProvinceTuple, Integer>> iterable) {
-        SortedSet<Map.Entry<ProvinceTuple, Integer>> result = new TreeSet<>(Comparator.comparing(Map.Entry::getValue));
+        SortedSet<Map.Entry<ProvinceTuple, Integer>> result = new TreeSet<>((o1, o2) -> o2.getValue()-o1.getValue());
         for(Map.Entry<ProvinceTuple, Integer> provinceTuple: iterable){
             Integer movements = provinceTuple.getValue();
             if(min <= movements){

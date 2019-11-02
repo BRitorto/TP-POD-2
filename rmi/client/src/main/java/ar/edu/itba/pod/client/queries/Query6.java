@@ -104,12 +104,10 @@ public class Query6 extends BaseQuery {
                 queryOutputList.add(new queryOutput(entry.getKey().getProvince1(), entry.getKey().getProvince2(), entry.getValue()));
         }
 
-        Collections.sort(queryOutputList);
-
         return queryOutputList;
     }
 
-    private class queryOutput implements Comparable<queryOutput>{
+    private class queryOutput {
         String provinceA;
         String provinceB;
         int movements;
@@ -135,11 +133,6 @@ public class Query6 extends BaseQuery {
         @Override
         public String toString() {
             return provinceA + ";" + provinceB + ";" + movements;
-        }
-
-        @Override
-        public int compareTo(queryOutput queryOutput) {
-            return queryOutput.movements - movements;
         }
     }
 }
