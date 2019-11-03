@@ -5,7 +5,7 @@
   <artifactId>rmi-parent</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>rmi-parent</name>
+  <name>​tpe2-g3-parent​</name>
   <modules>
     <module>api</module>
     <module>server</module>
