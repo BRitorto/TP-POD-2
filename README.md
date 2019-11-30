@@ -68,10 +68,12 @@ Para ejecutar cada query se tiene que parar en la carpeta descomprimida dentro d
 	$ ./query6.sh -addresses=127.0.0.1 -inPath=. -outPath=. -min=1000
 
 # Integrantes
+
   - Martina Scomazzon [@Mscomazzon](https://github.com/mscomazzon)
   - Bianca Ritorto [@BRitorto](https://github.com/BRitorto)
   - Esteban Kramer [@Estebank94](https://github.com/estebank94)
-  - Oliver Balfour [@Obalfour](https://github.com/obalfour)
+  - Oliver Balfour [@Obalfour](https://github.com/Obalfour)
 
 ## License
+
 [MIT](https://choosealicense.com/licenses/mit/)
